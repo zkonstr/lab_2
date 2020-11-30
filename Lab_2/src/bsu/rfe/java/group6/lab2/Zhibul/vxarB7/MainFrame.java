@@ -4,8 +4,7 @@ package bsu.rfe.java.group6.lab2.Zhibul.vxarB7;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
@@ -28,17 +27,22 @@ class MainFrame extends JFrame {
     private static final int HEIGHT = 640;
     // Текстовые поля для считывания значений переменных,
 // как компоненты, совместно используемые в различных методах
-    private JTextField textFieldX;
-    private JTextField textFieldY;
-    private JTextField textFieldZ;
+    private final JTextField textFieldX;
+    private final JTextField textFieldY;
+    private final JTextField textFieldZ;
     // Текстовое поле для отображения результата,
 // как компонент, совместно используемый в различных методах
-    private JTextField textFieldResult;
+    private final JTextField textFieldResult;
     // Группа радио-кнопок для обеспечения уникальности выделения в группе
-    private ButtonGroup radioButtons = new ButtonGroup();
+    private final ButtonGroup radioButtons = new ButtonGroup();
+    private final ButtonGroup memoryButtons = new ButtonGroup();
     // Контейнер для отображения радио-кнопок
-    private Box hboxFormulaType = Box.createHorizontalBox();
+    private final Box hboxFormulaType = Box.createHorizontalBox();
+    private final Box hboxMemoryType = Box.createHorizontalBox();
     private int formulaId = 1;
+    private int memId;
+    private double[] mem = new double[3];
+    Double result;
 
     // Формула №1 для рассчѐта
     public Double calculate1(Double x, Double y, Double z) {
@@ -52,16 +56,13 @@ class MainFrame extends JFrame {
     }
 
     // Вспомогательный метод для добавления кнопок на панель
-    private void addRadioButton(String buttonName, final int formulaId) {
+
+    private JRadioButton addRadioButton(ButtonGroup group, Box box, String buttonName, ActionListener listener) {
         JRadioButton button = new JRadioButton(buttonName);
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ev) {
-                MainFrame.this.formulaId = formulaId;
-                //    imagePane.updateUI();
-            }
-        });
-        radioButtons.add(button);
-        hboxFormulaType.add(button);
+        button.addActionListener(listener);
+        group.add(button);
+        box.add(button);
+        return button;
     }
 
     // Конструктор класса
@@ -73,8 +74,18 @@ class MainFrame extends JFrame {
         setLocation((kit.getScreenSize().width - WIDTH) / 2,
                 (kit.getScreenSize().height - HEIGHT) / 2);
         hboxFormulaType.add(Box.createHorizontalGlue());
-        addRadioButton("Формула 1", 1);
-        addRadioButton("Формула 2", 2);
+        addRadioButton(radioButtons, hboxFormulaType, "Формула 1", new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainFrame.this.formulaId = 1;
+            }
+        });
+        addRadioButton(radioButtons, hboxFormulaType, "Формула 2", new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainFrame.this.formulaId = 2;
+            }
+        });
         radioButtons.setSelected(
                 radioButtons.getElements().nextElement().getModel(), true);
         hboxFormulaType.add(Box.createHorizontalGlue());
@@ -109,9 +120,10 @@ class MainFrame extends JFrame {
 // Создать область для вывода результата
         JLabel labelForResult = new JLabel("Результат:");
 //labelResult = new JLabel("0");
-        textFieldResult = new JTextField("0", 10);
+        textFieldResult = new JTextField("0", 20);
         textFieldResult.setMaximumSize(
                 textFieldResult.getPreferredSize());
+        textFieldResult.setEditable(false);
         Box hboxResult = Box.createHorizontalBox();
         hboxResult.add(Box.createHorizontalGlue());
         hboxResult.add(labelForResult);
@@ -127,7 +139,7 @@ class MainFrame extends JFrame {
                     Double x = Double.parseDouble(textFieldX.getText());
                     Double y = Double.parseDouble(textFieldY.getText());
                     Double z = Double.parseDouble(textFieldZ.getText());
-                    Double result;
+                    result = 0.;
                     if (formulaId == 1)
                         result = calculate1(x, y, z);
                     else
@@ -157,6 +169,51 @@ class MainFrame extends JFrame {
         hboxButtons.add(Box.createHorizontalGlue());
         hboxButtons.setBorder(
                 BorderFactory.createLineBorder(Color.GREEN));
+        // box for memory
+        addRadioButton(memoryButtons, hboxMemoryType, "M1", new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                memId = 0;
+            }
+        });
+        addRadioButton(memoryButtons, hboxMemoryType, "M2", new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                memId = 1;
+            }
+        });
+        addRadioButton(memoryButtons, hboxMemoryType, "M3", new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                memId = 2;
+            }
+        });
+        memoryButtons.setSelected(memoryButtons.getElements().nextElement().getModel(), true);
+        Box hboxMemButtons = Box.createHorizontalBox();
+        hboxMemButtons.add(Box.createHorizontalGlue());
+        JButton buttonMP = new JButton("M+");
+        buttonMP.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mem[memId] += result;
+                textFieldResult.setText(Double.toString(mem[memId]));
+            }
+        });
+        hboxMemButtons.add(buttonMP);
+        hboxMemButtons.add(Box.createHorizontalStrut(30));
+        JButton buttonMC = new JButton("MC");
+        buttonMC.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mem[memId] = 0;
+                textFieldResult.setText("0");
+            }
+        });
+        ;
+        hboxMemButtons.add(buttonMC);
+        hboxMemButtons.add(Box.createHorizontalGlue());
+        hboxMemButtons.setBorder(BorderFactory.createLineBorder(Color.magenta));
+
 // Связать области воедино в компоновке BoxLayout
         Box contentBox = Box.createVerticalBox();
         contentBox.add(Box.createVerticalGlue());
@@ -164,6 +221,8 @@ class MainFrame extends JFrame {
         contentBox.add(hboxVariables);
         contentBox.add(hboxResult);
         contentBox.add(hboxButtons);
+        contentBox.add(hboxMemoryType);
+        contentBox.add(hboxMemButtons);
         contentBox.add(Box.createVerticalGlue());
         getContentPane().add(contentBox, BorderLayout.CENTER);
     }
