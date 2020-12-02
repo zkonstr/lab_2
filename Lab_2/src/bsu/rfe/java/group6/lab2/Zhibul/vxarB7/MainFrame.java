@@ -91,7 +91,7 @@ class MainFrame extends JFrame {
         hboxFormulaType.add(Box.createHorizontalGlue());
         hboxFormulaType.setBorder(
                 BorderFactory.createLineBorder(Color.YELLOW));
-// Создать область с полями ввода для X и Y
+// Создать область с полями ввода для X и Y и Z
         JLabel labelForX = new JLabel("X:");
         textFieldX = new JTextField("0", 10);
         textFieldX.setMaximumSize(textFieldX.getPreferredSize());
@@ -214,7 +214,7 @@ class MainFrame extends JFrame {
         hboxMemButtons.add(Box.createHorizontalGlue());
         hboxMemButtons.setBorder(BorderFactory.createLineBorder(Color.magenta));
 
-// Связать области воедино в компоновке BoxLayout
+
         Box contentBox = Box.createVerticalBox();
         contentBox.add(Box.createVerticalGlue());
         contentBox.add(hboxFormulaType);
@@ -227,4 +227,3 @@ class MainFrame extends JFrame {
         getContentPane().add(contentBox, BorderLayout.CENTER);
     }
 }
-// Главный метод класса
