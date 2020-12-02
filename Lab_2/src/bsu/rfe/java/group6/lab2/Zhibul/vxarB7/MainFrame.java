@@ -174,18 +174,22 @@ class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 memId = 0;
+                textFieldResult.setText(Double.toString(mem[memId]));
             }
         });
         addRadioButton(memoryButtons, hboxMemoryType, "M2", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 memId = 1;
+                textFieldResult.setText(Double.toString(mem[memId]));
             }
         });
         addRadioButton(memoryButtons, hboxMemoryType, "M3", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 memId = 2;
+                textFieldResult.setText(Double.toString(mem[memId]));
             }
         });
         memoryButtons.setSelected(memoryButtons.getElements().nextElement().getModel(), true);
